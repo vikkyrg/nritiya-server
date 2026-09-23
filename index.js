@@ -12,6 +12,24 @@ const PORT = process.env.PORT || 5000;
 app.set('trust proxy', 1);
 
 // Middleware
+app.use((req, res, next) => {
+    const allowedOrigins = (process.env.ALLOWED_ORIGINS || '*').split(',').map((origin) => origin.trim()).filter(Boolean);
+    const requestOrigin = req.headers.origin;
+    const isAllowed = !requestOrigin || allowedOrigins.includes('*') || allowedOrigins.includes(requestOrigin);
+
+    if (isAllowed) {
+        res.setHeader('Access-Control-Allow-Origin', requestOrigin || allowedOrigins[0] || '*');
+    }
+    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+
+    if (req.method === 'OPTIONS') {
+        return res.sendStatus(204);
+    }
+
+    next();
+});
 app.use(express.json());
 
 // Database Connection
