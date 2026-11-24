@@ -1,7 +1,7 @@
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 
-const TOKEN_EXPIRY = '12h';
+const TOKEN_EXPIRY = process.env.JWT_EXPIRES_IN || '7d';
 
 /** Constant-time string comparison to avoid trivial timing attacks. */
 function safeEqual(a, b) {
